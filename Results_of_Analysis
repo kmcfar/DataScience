@@ -1,6 +1,8 @@
-Introduction:
+<h1> Introduction: </h>
 
-I used the street map data from my hometown Bellevue, Washington and sought to analyze the following:
+I used the street map data from my hometown Bellevue, Washington (https://www.openstreetmap.org/export#map=13/47.6065/-122.1647). 
+
+I sought to analyze the following:
 - The number of food establishments
 - The most proliferate establishment (fast food or resstaurant)
 - The cuisines with the most number of establishments
