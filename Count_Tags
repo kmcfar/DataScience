@@ -1,0 +1,28 @@
+__author__ = 'kevinmcfarland'
+
+'''
+This code inspects and counts the tags contained in the dataset
+'''
+
+import xml.etree.ElementTree as ET
+import pprint
+import re
+import os
+
+OSM = 'bellevue_washington.osm'
+OSM_file = open(OSM, 'r')
+print OSM_file
+
+def count_tags(filename):
+    tags = {}
+    for event, element in ET.iterparse(filename, events =("start","end") ):
+       if event == "start" and element.tag not in tags:
+            tags[element.tag] = 1
+       elif event == "start" and element.tag in tags:
+            tags[element.tag] += 1
+    pprint.pprint(tags)
+
+
+count_tags(OSM_file)
+
+print "I'm done!"
