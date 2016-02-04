@@ -20,15 +20,15 @@ def get_db(db_name):
 
 def find_place(db, query):
     projection = {"id" : 1, "amenity" : 1, "name" : 1}
-    place = db.cities.find(query, projection)
+    place = db.Bellevue.find(query, projection)
     for p in place:
         pprint.pprint(p)
 
 
-# Query 1: Finding the total number of fast food and restaurants 
+# Query 1: Finding the total number of fast food and restaurants
 def food_count(db):
-    fast_food_count = db.cities.find({"amenity" : "fast_food"}).count()
-    restaurant_count = db.cities.find({"amenity" : "restaurant"}).count()
+    fast_food_count = db.Bellevue.find({"amenity" : "fast_food"}).count()
+    restaurant_count = db.Bellevue.find({"amenity" : "restaurant"}).count()
     total_count = fast_food_count + restaurant_count
     print "{} Total fast food establishments".format(fast_food_count)
     print "{} Total restaurants".format(restaurant_count)
@@ -36,7 +36,7 @@ def food_count(db):
 
 # Query 2: Finding the top 5 food establishments by number of locations
 def food_analysis(db):
-    result = db.cities.aggregate([
+    result = db.Bellevue.aggregate([
                 { "$match" : {"$or": [{"amenity" :"fast_food" }, {"amenity" : "restaurant"}]}},
                 { "$group" : {"_id": "$name",
                               "count": {"$sum" : 1 }}},
@@ -49,7 +49,7 @@ def food_analysis(db):
 
 # Query 3: Finding the top 5 cuisines by number of establishments with that cuisine
 def food_type_analysis(db):
-    result = db.cities.aggregate([
+    result = db.Bellevue.aggregate([
                 { "$match" : {"$or": [{"amenity" :"fast_food" }, {"amenity" : "restaurant"}]}},
                 { "$group" : {"_id": "$cuisine",
                               "count": {"$sum" : 1 }}},
@@ -58,22 +58,26 @@ def food_type_analysis(db):
             ])
     print "The top food cuisines are:"
     pprint.pprint(list(result))
-    
+
 
 # Query 4: Finding the number of zip codes in this map area
 def zip_codes(db):
-    result1 = db.cities.distinct("tiger:zip_left")
-    result2 = db.cities.distinct("tiger:zip_right")
+    result1 = db.Bellevue.distinct("tiger:zip_left")                    #zipcodes show up as 'tiger:' for ways and 'postcodes' for addresses
+    result2 = db.Bellevue.distinct("tiger:zip_right")
+    result3 = db.Bellevue.distinct("address.postcode")
     in_result1 = set(result1)
     in_result2 = set(result2)
+    in_result3 = set(result3)
     in_second_but_not_in_first = in_result2 - in_result1
-    merged_result = result1 + list(in_second_but_not_in_first)
+    in_third_but_not_in_others = in_result3 - in_second_but_not_in_first
+    merged_result = result1 + list(in_second_but_not_in_first) + list(in_third_but_not_in_others)
     print "There are {} zip codes: ".format(len(merged_result))
     pprint.pprint(list(merged_result))
 
+
 # Query 5: Finding the top 5 users by number of contributions
 def top_user(db):
-    user_result = db.cities.aggregate([
+    user_result = db.Bellevue.aggregate([
         {"$match": {"created.user" : {"$exists" : True}}},
         {"$group" : {"_id":"$created.user",
                      "count": {"$sum" : 1}}},
@@ -85,7 +89,7 @@ def top_user(db):
 
 
 if __name__ == "__main__":
-    db = get_db('cities_data')
+    db = get_db('project_2')
     query = place_query()
     count_of_food_establishments = food_count(db)
     top_food_establishments = food_analysis(db)

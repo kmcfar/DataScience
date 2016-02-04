@@ -17,7 +17,7 @@ lower_colon = re.compile(r'^([a-z]|_)*:([a-z]|_)*$')
 problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
 
-def key_type(element, keys):
+def key_type(element, keys):                                            #counts the number of times each tag type occurs
     if element.tag == "tag":
         k_value = element.get("k")
         if re.search(lower, k_value):
